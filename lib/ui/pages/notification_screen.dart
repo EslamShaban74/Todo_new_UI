@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo/services/theme_services.dart';
 import 'package:todo/ui/theme.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -17,11 +17,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     _payload = widget.payload;
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    RichText text;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -34,7 +36,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
         backgroundColor: context.theme.backgroundColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => Get.back(),
+          onPressed: () {
+ //           Get.back();
+            ThemeServices().switchTheme();
+          },
         ),
       ),
       body: SafeArea(
@@ -42,14 +47,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
           children: [
             Column(
               children: <Widget>[
-                Text(
-                  'Hello, Islam',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900,
-                    color: Get.isDarkMode ? Colors.white : darkGreyClr,
-                  ),
-                ),
+                text = RichText(
+                  text: TextSpan(
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w900,
+                        color: Get.isDarkMode ? Colors.white : darkGreyClr,
+                      ),
+                      children: const [
+                        TextSpan(text: 'Hello, '),
+                        TextSpan(text: 'Islam ',style: TextStyle(color: primaryClr)),
+                      ]),
+                ), // Text(
+                //   'Hello, Islam',
+                //   style: TextStyle(
+                //     fontSize: 26,
+                //     fontWeight: FontWeight.w900,
+                //     color: Get.isDarkMode ? Colors.white : darkGreyClr,
+                //   ),
+                // ),
                 const SizedBox(height: 10.0),
                 Text(
                   'You have a new Reminder',
@@ -65,7 +81,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
             Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 30.0),
-                padding: const EdgeInsets.symmetric(horizontal: 30.0,vertical: 20.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0, vertical: 20.0),
                 decoration: BoxDecoration(
                   color: primaryClr,
                   borderRadius: BorderRadius.circular(30.0),
@@ -86,19 +103,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             'Title',
                             style: TextStyle(
                               fontSize: 30,
-
                               color: Colors.white,
                             ),
                           ),
-
-
                         ],
                       ),
                       const SizedBox(width: 20.0),
                       Text(
                         _payload.toString().split('|')[0],
                         style: const TextStyle(
-                          color:  Colors.white ,
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(width: 20.0),
@@ -114,7 +128,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             'Description',
                             style: TextStyle(
                               fontSize: 30,
-
                               color: Colors.white,
                             ),
                           ),
@@ -124,8 +137,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       Text(
                         _payload.toString().split('|')[1],
                         style: const TextStyle(
-
-                          color:  Colors.white ,
+                          color: Colors.white,
                         ),
                         textAlign: TextAlign.justify,
                       ),
@@ -142,7 +154,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             'Date',
                             style: TextStyle(
                               fontSize: 30,
-
                               color: Colors.white,
                             ),
                           ),
@@ -152,10 +163,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       Text(
                         _payload.toString().split('|')[2],
                         style: const TextStyle(
-
-                          color:  Colors.white ,
+                          color: Colors.white,
                         ),
-
                       ),
                     ],
                   ),
