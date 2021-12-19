@@ -21,14 +21,14 @@ class InputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 16),
+      margin: const EdgeInsets.only(left: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title, style: titleStyle),
           Container(
-            padding: const EdgeInsets.only(top: 8),
-            margin: const EdgeInsets.only(left: 14),
+            padding: const EdgeInsets.only(left: 14),
+            margin: const EdgeInsets.only(top: 8),
             width: SizeConfig.screenWidth,
             height: 52,
             decoration: BoxDecoration(
