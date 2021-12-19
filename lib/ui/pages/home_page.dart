@@ -5,6 +5,7 @@ import 'package:todo/ui/size_config.dart';
 import 'package:todo/ui/widgets/button.dart';
 import 'package:get/get.dart';
 
+import '../theme.dart';
 import '../widgets/input_field.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,7 +20,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: context.theme.backgroundColor,
+      appBar: _appBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -38,4 +40,27 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  AppBar _appBar() => AppBar(
+        elevation: 0.0,
+        backgroundColor: context.theme.backgroundColor,
+        leading: IconButton(
+          icon: Icon(
+            Get.isDarkMode
+                ? Icons.wb_sunny_outlined
+                : Icons.nightlight_round_outlined,
+            color: Get.isDarkMode ? Colors.white : darkGreyClr,
+            size: 20,
+          ),
+          onPressed: () {
+            ThemeServices().switchTheme();
+          },
+        ),
+        actions: const [
+          CircleAvatar(
+            backgroundImage: AssetImage('assets/images/person.jpeg'),
+          ),
+          SizedBox(width: 20.0),
+        ],
+      );
 }
