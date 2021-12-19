@@ -11,8 +11,6 @@ import 'package:get/get.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // set default min and max size ,, and start offset of windows app
-  ThemeServices().loadThemeFromBox();
-  ThemeServices().theme;
   if (Platform.isWindows) {
     setWindowMaxSize(const Size(double.infinity, 768));
     setWindowMinSize(const Size(400, 400));
