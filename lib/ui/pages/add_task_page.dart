@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:todo/controllers/task_controller.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:todo/services/theme_services.dart';
 import 'package:todo/ui/theme.dart';
 import 'package:todo/ui/widgets/input_field.dart';
 
@@ -35,7 +36,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: context.theme.backgroundColor,
+      appBar: _appBar(),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SingleChildScrollView(
@@ -183,6 +185,27 @@ class _AddTaskPageState extends State<AddTaskPage> {
       ),
     );
   }
+
+  AppBar _appBar() => AppBar(
+        elevation: 0.0,
+        backgroundColor: context.theme.backgroundColor,
+        leading: IconButton(
+          icon:  Icon(
+            Icons.arrow_back_ios,
+            color: Get.isDarkMode ? Colors.white : primaryClr,
+            size: 20,
+          ),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+        actions: const [
+          CircleAvatar(
+            backgroundImage: AssetImage('assets/images/person.jpeg'),
+          ),
+          SizedBox(width: 20.0),
+        ],
+      );
 
   _colorPalette() {
     return Padding(
