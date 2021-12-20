@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:todo/services/notification_services.dart';
 import 'package:todo/services/theme_services.dart';
 import 'package:todo/ui/pages/home_page.dart';
 import 'package:todo/ui/pages/notification_screen.dart';
@@ -8,7 +9,7 @@ import 'package:todo/ui/theme.dart';
 import 'package:window_size/window_size.dart';
 import 'package:get/get.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // set default min and max size ,, and start offset of windows app
   if (Platform.isWindows) {
