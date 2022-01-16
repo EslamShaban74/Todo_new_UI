@@ -1,16 +1,18 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:todo/services/notification_services.dart';
+import 'package:todo/db/db_helper.dart';
 import 'package:todo/services/theme_services.dart';
 import 'package:todo/ui/pages/home_page.dart';
-import 'package:todo/ui/pages/notification_screen.dart';
 import 'package:todo/ui/theme.dart';
 import 'package:window_size/window_size.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
+  await DBHelper.initDb();
   // set default min and max size ,, and start offset of windows app
   if (Platform.isWindows) {
     setWindowMaxSize(const Size(double.infinity, 768));
@@ -29,12 +31,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      theme: Themes.light,
-      darkTheme: Themes.dark,
-      themeMode: ThemeServices().theme,
-      title: 'To do',
-      debugShowCheckedModeBanner: false,
-      home: const HomePage()
-    );
+        theme: Themes.light,
+        darkTheme: Themes.dark,
+        themeMode: ThemeServices().theme,
+        title: 'To do',
+        debugShowCheckedModeBanner: false,
+        home: const HomePage());
   }
 }
