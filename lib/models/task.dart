@@ -10,15 +10,31 @@ class Task {
   int? remind;
   String? repeat;
 
-  Task(
-      {this.id,
-      this.title,
-      this.note,
-      this.isCompleted,
-      this.date,
-      this.startTime,
-      this.endTime,
-      this.color,
-      this.remind,
-      this.repeat});
+  Task({this.id,
+    this.title,
+    this.note,
+    this.isCompleted,
+    this.date,
+    this.startTime,
+    this.endTime,
+    this.color,
+    this.remind,
+    this.repeat});
+
+  Map<String, dynamic> toJson() {
+    return
+      {
+        'id': id,
+        'title': title,
+        'note': note,
+        'isCompleted': isCompleted,
+        'date': date,
+        'startTime': startTime,
+        'endTime': endTime,
+        'color': color,
+        'remind': remind,
+        'repeat': repeat,
+
+      };
+  }
 }

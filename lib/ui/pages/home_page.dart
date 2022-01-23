@@ -70,7 +70,6 @@ class _HomePageState extends State<HomePage> {
           ),
           onPressed: () {
             ThemeServices().switchTheme();
-            notifyHelper.displayNotification(title: 'title', body: 'body');
           },
         ),
         actions: const [
@@ -158,21 +157,27 @@ class _HomePageState extends State<HomePage> {
           var task = _taskController.taskList[index];
           var hour = task.startTime.toString().split(':')[0];
           var minutes = task.startTime.toString().split(':')[1];
-
+          debugPrint('my time is ' + hour);
+          debugPrint('my time is ' + minutes);
           var date = DateFormat.jm().parse(task.startTime!);
           var myTime = DateFormat('HH:mm').format(date);
           NotifyHelper().scheduledNotification(
-              int.parse(myTime.toString().split(':')[0]),
-              int.parse(myTime.toString().split(':')[1]),
-              task);
+            int.parse(myTime.toString().split(':')[0]),
+            int.parse(myTime.toString().split(':')[1]),
+            task,
+          );
           return AnimationConfiguration.staggeredList(
-            duration: const Duration(milliseconds: 1300),
+            duration: const Duration(milliseconds: 500),
             position: index,
             child: SlideAnimation(
+              delay:  const Duration(milliseconds: 100),
               horizontalOffset: 300,
               child: FadeInAnimation(
+                duration: const Duration(milliseconds:100),
                 child: GestureDetector(
-                  onTap: _showBottomSheet(context, task),
+                  onTap: () {
+                    _showBottomSheet(context, task);
+                  },
                   child: TaskTile(task),
                 ),
               ),
@@ -294,6 +299,7 @@ class _HomePageState extends State<HomePage> {
                     onTap: () {},
                     color: primaryClr,
                   ),
+            const SizedBox(height: 10),
             _buildBottomSheet(
               label: 'Delete Task',
               onTap: () {},
