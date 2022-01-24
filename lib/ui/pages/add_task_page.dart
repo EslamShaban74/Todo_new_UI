@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:todo/ui/theme.dart';
 import 'package:todo/ui/widgets/input_field.dart';
 
+import '../../models/task.dart';
 import '../widgets/button.dart';
 
 class AddTaskPage extends StatefulWidget {
@@ -173,7 +174,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   MyButton(
                     label: 'Create Task',
                     onTap: () {
-                      Get.back();
+                      _validateDate();
                     },
                   )
                 ],
@@ -189,7 +190,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         elevation: 0.0,
         backgroundColor: context.theme.backgroundColor,
         leading: IconButton(
-          icon:  Icon(
+          icon: Icon(
             Icons.arrow_back_ios,
             color: Get.isDarkMode ? Colors.white : primaryClr,
             size: 20,
@@ -205,6 +206,42 @@ class _AddTaskPageState extends State<AddTaskPage> {
           SizedBox(width: 20.0),
         ],
       );
+
+  _validateDate() {
+    if (_titleController.text.isNotEmpty && _noteController.text.isNotEmpty) {
+      addTaskstoDb();
+      Get.back();
+    } else if (_titleController.text.isEmpty || _noteController.text.isEmpty) {
+      Get.snackbar(
+        'Field required',
+        'Title and Note fields are required',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.white,
+        colorText: pinkClr,
+        icon: const Icon(Icons.warning_amber_rounded, color: Colors.red),
+      );
+    } else {
+      debugPrint('errrrrrroorrr');
+    }
+  }
+
+  addTaskstoDb() async {
+    int value = await _taskController.addTask(
+      task: Task(
+        title: _titleController.text,
+        note: _noteController.text,
+        isCompleted: 0,
+        date: DateFormat.yMd().format(_selectedDate),
+        startTime: _startTime,
+        endTime: _endTime,
+        color: _selectedColor,
+        remind: _selectedRemind,
+        repeat: _selectedRepeat,
+      ),
+    );
+
+    debugPrint('$value');
+  }
 
   _colorPalette() {
     return Padding(
