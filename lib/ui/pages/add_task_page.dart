@@ -20,10 +20,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
 
-  final DateTime _selectedDate = DateTime.now();
-  final String _startTime =
-      DateFormat('hh:mm a').format(DateTime.now()).toString();
-  final String _endTime = DateFormat('hh:mm a')
+  DateTime _selectedDate = DateTime.now();
+  String _startTime = DateFormat('hh:mm a').format(DateTime.now()).toString();
+  String _endTime = DateFormat('hh:mm a')
       .format(DateTime.now().add(const Duration(minutes: 15)));
 
   int _selectedRemind = 5;
@@ -69,7 +68,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       title: 'Start Time',
                       hint: _startTime,
                       widget: IconButton(
-                        onPressed: () {},
+                        onPressed: () => _getTimeFromUser(isStartTime: true),
                         icon: const Icon(Icons.access_time_rounded),
                         color: Colors.grey,
                       ),
@@ -80,7 +79,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       title: 'End Time',
                       hint: _endTime,
                       widget: IconButton(
-                        onPressed: () {},
+                        onPressed: () => _getTimeFromUser(isStartTime: false),
                         icon: const Icon(Icons.access_time_rounded),
                         color: Colors.grey,
                       ),
@@ -189,7 +188,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         elevation: 0.0,
         backgroundColor: context.theme.backgroundColor,
         leading: IconButton(
-          icon:  Icon(
+          icon: Icon(
             Icons.arrow_back_ios,
             color: Get.isDarkMode ? Colors.white : primaryClr,
             size: 20,
@@ -249,5 +248,49 @@ class _AddTaskPageState extends State<AddTaskPage> {
         ],
       ),
     );
+  }
+
+  _getDateFromUser() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2015),
+      lastDate: DateTime(2030),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    } else {
+      debugPrint(' __ ');
+    }
+  }
+
+  _getTimeFromUser({required bool isStartTime}) async {
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: isStartTime
+          ? TimeOfDay.fromDateTime(DateTime.now())
+          : TimeOfDay.fromDateTime(
+              DateTime.now().add(
+                const Duration(minutes: 15),
+              ),
+            ),
+    );
+
+    String formattedTime = pickedTime!.format(context);
+    if (isStartTime) {
+      setState(() {
+        _startTime = formattedTime;
+      });
+    }
+    else if (!isStartTime) {
+      setState(() {
+        _endTime = formattedTime;
+      });
+    } else {
+      debugPrint('time canceled or something went wrong');
+    }
   }
 }
