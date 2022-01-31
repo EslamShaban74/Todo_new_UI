@@ -1,55 +1,26 @@
 import 'package:todo/models/task.dart';
-import 'package:intl/intl.dart';
+import 'package:get/get.dart';
+
+import '../db/db_helper.dart';
 
 class TaskController {
-  List taskList = <Task>[
-    Task(
-      id: 5,
-      title: 'title 1 ',
-      note: 'No thing to do ',
-      startTime: DateFormat('hh:mm a')
-          .format(DateTime.now().add(const Duration(minutes: 1))),
-      date: 'wed',
-      color: 1,
-      isCompleted: 0,
-    ),
-    Task(
-      id: 1,
-      title: 'title 1 ',
-      note: 'No thing to do ',
-      startTime: DateFormat('hh:mm a')
-          .format(DateTime.now().add(const Duration(minutes: 1))),
-      date: 'wed',
-      color: 1,
-      isCompleted: 0,
-    ),
-    Task(
-      id: 1,
-      title: 'title 1 ',
-      note: 'No thing to do ',
-      startTime: DateFormat('hh:mm a')
-          .format(DateTime.now().add(const Duration(minutes: 1))),
-      date: 'wed',
-      color: 1,
-      isCompleted: 0,
-    ),
-    Task(
-      id: 1,
-      title: 'title 1 ',
-      note: 'No thing to do ',
-      startTime: DateFormat('hh:mm a')
-          .format(DateTime.now().add(const Duration(minutes: 1))),
-      date: 'wed',
-      color: 1,
-      isCompleted: 0,
-    ),
-  ];
+  List taskList = <Task>[].obs;
 
-
-  addTask({required Task task}) {
-
-
+  Future<int> addTask({required Task task}) {
+    return DBHelper.insert(task);
   }
 
-  void getTasks() {}
+  void getTasks() async {
+    final List<Map<String, dynamic>> tasks = await DBHelper.query();
+  }
+
+  deleteTasks({required Task task}) async {
+    await DBHelper.delete(task);
+    getTasks();
+  }
+
+  markTaskCompleted({required int id}) async {
+    await DBHelper.update(id);
+    getTasks();
+  }
 }
