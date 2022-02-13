@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:todo/db/db_helper.dart';
 import 'package:todo/services/theme_services.dart';
 import 'package:todo/ui/pages/home_page.dart';
+import 'package:todo/ui/pages/notification_screen.dart';
 import 'package:todo/ui/theme.dart';
 import 'package:window_size/window_size.dart';
 import 'package:get/get.dart';
@@ -36,6 +37,6 @@ class MyApp extends StatelessWidget {
         themeMode: ThemeServices().theme,
         title: 'To do',
         debugShowCheckedModeBanner: false,
-        home: const HomePage());
+        home: const NotificationScreen(payload: 'dsd|Dfdf|sdsd'));
   }
 }

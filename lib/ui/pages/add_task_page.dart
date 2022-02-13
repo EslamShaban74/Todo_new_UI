@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/controllers/task_controller.dart';
 import 'package:get/get.dart';
@@ -57,7 +56,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 title: 'Date',
                 hint: DateFormat.yMd().format(_selectedDate),
                 widget: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _getDateFromUser();
+                  },
                   icon: const Icon(Icons.calendar_today_outlined),
                   color: Colors.grey,
                 ),
@@ -208,7 +209,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   _validateDate() {
     if (_titleController.text.isNotEmpty && _noteController.text.isNotEmpty) {
-      addTaskstoDb();
+      addTasksToDb();
       Get.back();
     } else if (_titleController.text.isEmpty || _noteController.text.isEmpty) {
       Get.snackbar(
@@ -224,7 +225,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }
   }
 
-  addTaskstoDb() async {
+  addTasksToDb() async {
     int value = await _taskController.addTask(
       task: Task(
         title: _titleController.text,
