@@ -12,10 +12,16 @@ class TaskController {
 
   void getTasks() async {
     final List<Map<String, dynamic>> tasks = await DBHelper.query();
+    taskList.assignAll(tasks.map((data) => Task.fromJson(data)).toList());
   }
 
   deleteTasks({required Task task}) async {
     await DBHelper.delete(task);
+    getTasks();
+  }
+
+  deleteAll() async {
+    await DBHelper.deleteAll();
     getTasks();
   }
 

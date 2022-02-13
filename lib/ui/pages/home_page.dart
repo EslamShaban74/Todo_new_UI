@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> {
     notifyHelper = NotifyHelper();
     notifyHelper.initializeNotification();
     notifyHelper.requestIOSPermissions();
+    //_taskController.getTasks();
   }
 
   @override
@@ -72,11 +73,23 @@ class _HomePageState extends State<HomePage> {
             ThemeServices().switchTheme();
           },
         ),
-        actions: const [
-          CircleAvatar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                _taskController.deleteAll();
+                notifyHelper.cancelAllNotification();
+              },
+              icon: Icon(
+                Icons.delete,
+                color: Get.isDarkMode ? Colors.white : darkGreyClr,
+                size: 20,
+              )),
+          const SizedBox(width: 5.0),
+
+          const CircleAvatar(
             backgroundImage: AssetImage('assets/images/person.jpeg'),
           ),
-          SizedBox(width: 20.0),
+          const SizedBox(width: 20.0),
         ],
       );
 
@@ -148,41 +161,70 @@ class _HomePageState extends State<HomePage> {
 
   _showTasks() {
     return Expanded(
-      child: ListView.builder(
-        scrollDirection: SizeConfig.orientation == Orientation.landscape
-            ? Axis.horizontal
-            : Axis.vertical,
-        itemCount: _taskController.taskList.length,
-        itemBuilder: (context, index) {
-          var task = _taskController.taskList[index];
-          var hour = task.startTime.toString().split(':')[0];
-          var minutes = task.startTime.toString().split(':')[1];
-          debugPrint('my time is ' + hour);
-          debugPrint('my time is ' + minutes);
-          var date = DateFormat.jm().parse(task.startTime!);
-          var myTime = DateFormat('HH:mm').format(date);
-          NotifyHelper().scheduledNotification(
-            int.parse(myTime.toString().split(':')[0]),
-            int.parse(myTime.toString().split(':')[1]),
-            task,
-          );
-          return AnimationConfiguration.staggeredList(
-            duration: const Duration(milliseconds: 500),
-            position: index,
-            child: SlideAnimation(
-              delay:  const Duration(milliseconds: 100),
-              horizontalOffset: 300,
-              child: FadeInAnimation(
-                duration: const Duration(milliseconds:100),
-                child: GestureDetector(
-                  onTap: () {
-                    _showBottomSheet(context, task);
-                  },
-                  child: TaskTile(task),
-                ),
+      child: Obx(
+        () {
+          if (_taskController.taskList.isEmpty) {
+            return _noTaskMsg();
+          } else {
+            return RefreshIndicator(
+              onRefresh: _onRefresh,
+              child: ListView.builder(
+                scrollDirection: SizeConfig.orientation == Orientation.landscape
+                    ? Axis.horizontal
+                    : Axis.vertical,
+                itemCount: _taskController.taskList.length,
+                itemBuilder: (context, index) {
+                  var task = _taskController.taskList[index];
+
+                  if (task.repeat == 'Daily' ||
+                      task.date == DateFormat.yMd().format(_selectedDate) ||
+                      (task.repeat == 'Weekly' &&
+                          _selectedDate
+                                      .difference(
+                                          DateFormat.yMd().parse(task.date!))
+                                      .inDays %
+                                  7 ==
+                              0) ||
+                      (task.repeat == 'Monthly' &&
+                          DateFormat.yMd().parse(task.date!).day ==
+                              _selectedDate.day)) {
+                    var hour = task.startTime.toString().split(':')[0];
+                    var minutes = task.startTime.toString().split(':')[1];
+                    debugPrint('my time is ' + hour);
+                    debugPrint('my time is ' + minutes);
+                    var date = DateFormat.jm().parse(task.startTime!);
+                    var myTime = DateFormat('HH:mm').format(date);
+                    NotifyHelper().scheduledNotification(
+                      int.parse(myTime.toString().split(':')[0]),
+                      int.parse(myTime.toString().split(':')[1]),
+                      task,
+                    );
+                    return AnimationConfiguration.staggeredList(
+                      duration: const Duration(milliseconds: 500),
+                      position: index,
+                      child: SlideAnimation(
+                        delay: const Duration(milliseconds: 100),
+                        horizontalOffset: 300,
+                        child: FadeInAnimation(
+                          duration: const Duration(milliseconds: 100),
+                          child: GestureDetector(
+                            onTap: () {
+                              _showBottomSheet(context, task);
+                            },
+                            child: TaskTile(task),
+                          ),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      height: 0,
+                    );
+                  }
+                },
               ),
-            ),
-          );
+            );
+          }
         },
       ),
     );
@@ -193,36 +235,39 @@ class _HomePageState extends State<HomePage> {
       children: [
         AnimatedPositioned(
           duration: const Duration(milliseconds: 2000),
-          child: SingleChildScrollView(
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              direction: SizeConfig.orientation == Orientation.landscape
-                  ? Axis.horizontal
-                  : Axis.vertical,
-              children: [
-                SizeConfig.orientation == Orientation.landscape
-                    ? const SizedBox(height: 100.0)
-                    : const SizedBox(height: 150),
-                SvgPicture.asset(
-                  'assets/images/task.svg',
-                  height: 100,
-                  semanticsLabel: 'tasks',
-                  color: primaryClr.withOpacity(0.5),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 15.0),
-                  child: Text(
-                    'You don\'t have any tasks yet! \n Add new tasks to make your days productive ',
-                    style: subTitleStyle,
-                    textAlign: TextAlign.center,
+          child: RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: SingleChildScrollView(
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                direction: SizeConfig.orientation == Orientation.landscape
+                    ? Axis.horizontal
+                    : Axis.vertical,
+                children: [
+                  SizeConfig.orientation == Orientation.landscape
+                      ? const SizedBox(height: 100.0)
+                      : const SizedBox(height: 150),
+                  SvgPicture.asset(
+                    'assets/images/task.svg',
+                    height: 100,
+                    semanticsLabel: 'tasks',
+                    color: primaryClr.withOpacity(0.5),
                   ),
-                ),
-                SizeConfig.orientation == Orientation.landscape
-                    ? const SizedBox(height: 10)
-                    : const SizedBox(height: 40),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30.0, vertical: 15.0),
+                    child: Text(
+                      'You don\'t have any tasks yet! \n Add new tasks to make your days productive ',
+                      style: subTitleStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizeConfig.orientation == Orientation.landscape
+                      ? const SizedBox(height: 10)
+                      : const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
         ),
@@ -296,14 +341,22 @@ class _HomePageState extends State<HomePage> {
                 ? Container()
                 : _buildBottomSheet(
                     label: 'Task completed',
-                    onTap: () {},
+                    onTap: () {
+                      notifyHelper.cancelNotification(task);
+                      _taskController.markTaskCompleted(id: task.id!);
+                      Get.back();
+                    },
                     color: primaryClr,
                   ),
             const SizedBox(height: 10),
             _buildBottomSheet(
               label: 'Delete Task',
-              onTap: () {},
-              color: primaryClr,
+              onTap: () {
+                notifyHelper.cancelNotification(task);
+                _taskController.deleteTasks(task: task);
+                Get.back();
+              },
+              color: Colors.red[300]!,
             ),
             Divider(color: Get.isDarkMode ? Colors.grey : darkGreyClr),
             _buildBottomSheet(
@@ -318,5 +371,9 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     ));
+  }
+
+  Future<void> _onRefresh() async {
+    _taskController.getTasks();
   }
 }
